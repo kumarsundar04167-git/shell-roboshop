@@ -39,4 +39,3 @@ validate "allowing remote connections" $?
 
 systemctl restart mongod
 validate "restarting mongod" $?
-
