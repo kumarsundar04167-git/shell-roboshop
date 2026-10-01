@@ -33,7 +33,7 @@ validate "enabling redis:7" $?
 dnf install redis -y  &>> $LOGS_FILE
 validate "installing redis" $?
 
-sed -i -e 's/127.0.0.1/0.0.0.0/g  -e '/protected-mode/ c protected-mode no' /etc/redis/redis.conf  &>> $LOGS_FILE
+sed -i -e 's/127.0.0.1/0.0.0.0/g'  -e '/protected-mode/ c protected-mode no' /etc/redis/redis.conf  &>> $LOGS_FILE
 validate "allowing remote connections and protected mode change" $?
 
 systemctl enable redis  &>> $LOGS_FILE
