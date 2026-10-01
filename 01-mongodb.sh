@@ -6,7 +6,7 @@ sudo chown -R ec2-user:ec2-user $LOGS_DIR
 sudo chmod -R 755 $LOGS_DIR
 LOGS_FILE=$LOGS_DIR/$0.log
 
-TIMESTAMP=$(date +%Y-%M-%D %H-%M-%S)
+TIMESTAMP=$(date "+%Y-%M-%D %H:%M:%S")
 R="\e[31m"
 G="\e[32m"
 Y="\e[33m"
