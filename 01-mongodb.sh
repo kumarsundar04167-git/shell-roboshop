@@ -15,6 +15,7 @@ N="\e[0m"
 if [ $userid -ne 0 ]; then
     echo -e " $TIMESTAMP $Y [ERROR] $N please run this as a root user $N" | tee -a $LOGS_FILE
     exit 1
+fi
 
 validate(){
     if [ $2 -ne 0 ]; then
