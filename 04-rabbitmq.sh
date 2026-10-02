@@ -13,16 +13,16 @@ Y="\e[33m"
 N="\e[0m"
 
 if [ $userid -ne 0 ]; then
-     echo " $TIMESTAMP $R [ERROR] $N $Y please run this as root user $N"
+     echo -e " $TIMESTAMP $R [ERROR] $N $Y please run this as root user $N"
      exit 1
 fi
 
 validate(){
     if [ $2 -ne 0 ]; then
-        echo " $TIMESTAMP $R [ERROR] $N given $1 is ..... $R failed $N"
+        echo -e " $TIMESTAMP $R [ERROR] $N given $1 is ..... $R failed $N"
         exit 1
     else
-        echo " $TIMESTAMP $Y [INFO] $N given $1 is ..... $G success $N"
+        echo -e " $TIMESTAMP $Y [INFO] $N given $1 is ..... $G success $N"
     fi
 }
 
