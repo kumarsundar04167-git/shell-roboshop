@@ -78,7 +78,7 @@ else
     echo -e " $TIMESTAMP already products loaded ..... $Y skipping $N "
 fi
 
-systemctl daemon-reload
+
 systemctl enable catalogue 
 systemctl start catalogue   &>>$LOGS_FILE
 validate "enabled and restarted catalogue" $?
