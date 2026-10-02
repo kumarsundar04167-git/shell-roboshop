@@ -28,10 +28,10 @@ validate(){
 }
 
 dnf module disable nodejs -y
-dnf module enable nodejs:20 -y   &>>  $LOGS_FILE
+dnf module enable nodejs:20 -y   &>>$LOGS_FILE
 validate "disabled and enable nodejs:20" $?
 
-dnf install nodejs -y   &>>  $LOGS_FILE
+dnf install nodejs -y   &>>$LOGS_FILE
 validate "installing nodejs" $?
 
 id roboshop
@@ -53,23 +53,23 @@ validate "creating app directory" $?
 
 curl -o /tmp/catalogue.zip https://roboshop-artifacts.s3.amazonaws.com/catalogue-v3.zip 
 cd /app 
-unzip /tmp/catalogue.zip  &>>  $LOGS_FILE
+unzip /tmp/catalogue.zip  &>>$LOGS_FILE
 validate "download and extracting code" $?
 
 cd /app 
-npm install  &>>  $LOGS_FILE
+npm install  &>>$LOGS_FILE
 validate "installing dependencies" $?
 
-cp $SCRIPT_DIR/catalogue.service /etc/systemd/system/catalogue.service  &>>  $LOGS_FILE
+cp $SCRIPT_DIR/catalogue.service /etc/systemd/system/catalogue.service  &>>$LOGS_FILE
 validate "copying service file" $?
 
-cp $SCRIPT_DIR/mongo.repo /etc/yum.repos.d/mongo.repo  &>>  $LOGS_FILE
+cp $SCRIPT_DIR/mongo.repo /etc/yum.repos.d/mongo.repo  &>>$LOGS_FILE
 validate "copying mongo.repo" $?
 
-dnf install mongodb-mongosh -y  &>>  $LOGS_FILE
+dnf install mongodb-mongosh -y  &>>$LOGS_FILE
 validate "installing mongodb client" $?
 
-INDEX=$(mongosh --host mongodb.devopsonline.online --eval 'db.getMongo().getDBNames().indexOf("catalogue")') &>>  $LOGS_FILE
+INDEX=$(mongosh --host mongodb.devopsonline.online --eval 'db.getMongo().getDBNames().indexOf("catalogue")') &>>$LOGS_FILE
 
 if [ $INDEX -lt 0 ]; then
     mongosh --host mongodb.devopsonline.online </app/db/master-data.js
@@ -80,5 +80,5 @@ fi
 
 systemctl daemon-reload
 systemctl enable catalogue 
-systemctl start catalogue   &>>  $LOGS_FILE
+systemctl start catalogue   &>>$LOGS_FILE
 validate "enabled and restarted catalogue" $?
