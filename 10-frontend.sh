@@ -44,8 +44,8 @@ unzip /tmp/frontend.zip  &>>  $LOGS_FILE
 validate "downloading and unzipping the code" $?
 
 cp $SCRIPT_DIR/nginx.conf /etc/nginx/nginx.conf &>> $LOGS_FILE
-VALIDATE $? "Copied roboshop nginx conf"
+validate $? "Copied roboshop nginx conf"
 
 systemctl restart nginx
 systemctl enable nginx &>> $LOGS_FILE
-VALIDATE $? "Enabled and restarted nginx"
+validate $? "Enabled and restarted nginx"
