@@ -6,22 +6,8 @@ DOMAIN_NAME="devopsonline.online" # replace with your domain name
 
 for instance in $@
 do
-   echo "Launching instance: $instance"
-
-COMMON_SG=$(aws ec2 describe-security-groups \
-    --filters "Name=group-name,Values=roboshop-common" \
-    --query 'SecurityGroups[0].GroupId' \
-    --output text)
-
-COMPONENT_SG=$(aws ec2 describe-security-groups \
-    --filters "Name=group-name,Values=roboshop-$instance" \
-    --query 'SecurityGroups[0].GroupId' \
-    --output text)
-
-echo "Common SG: $COMMON_SG"
-echo "$instance SG: $COMPONENT_SG"
-
-    INSTANCE_ID=$(aws ec2 run-instances \
+    echo "Launching instance: $instance"
+    INSTANCE_ID=$( aws ec2 run-instances \
         --image-id "ami-0220d79f3f480ecf5"  \
         --instance-type t3.micro \
         --security-groups "roboshop-common" "roboshop-$instance" \
@@ -33,13 +19,13 @@ echo "$instance SG: $COMPONENT_SG"
 
 
     if [ $instance == "frontend" ]; then
-        IP=$(aws ec2 describe-instances --instance-ids $INSTANCE_ID \
+        IP=$( aws ec2 describe-instances --instance-ids $INSTANCE_ID \
          --query 'Reservations[*].Instances[*].PublicIpAddress' \
          --output text
         )
         R53_RECORD="$DOMAIN_NAME"
     else
-        IP=$(aws ec2 describe-instances --instance-ids $INSTANCE_ID \
+        IP=$( aws ec2 describe-instances --instance-ids $INSTANCE_ID \
          --query 'Reservations[*].Instances[*].PrivateIpAddress' \
          --output text
         )
