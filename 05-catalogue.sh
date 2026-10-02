@@ -4,7 +4,7 @@ LOGS_DIR="var/log/roboshop"
 sudo mkdir -p $LOGS_DIR
 sudo chown -R ec2-user:ec2-user $LOGS_DIR
 sudo chmod -R 755 $LOGS_DIR
-LOGS_FILE="$LOGS_DIR/$0.log""
+LOGS_FILE="$LOGS_DIR/$0.log"
 SCRIPT_DIR=$pwd
 
 TIMESTAMP=$(date "+%H:%M:%S")
