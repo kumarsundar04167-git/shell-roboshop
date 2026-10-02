@@ -81,4 +81,4 @@ fi
 
 systemctl enable catalogue 
 systemctl start catalogue   &>>$LOGS_FILE
-validate "enabled and restarted catalogue" $?
+validate "enabled and restarted catalogue"  $?
