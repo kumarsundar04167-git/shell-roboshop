@@ -13,31 +13,31 @@ Y="\e[33m"
 N="\e[0m"
 
 if [ $userid -ne 0 ]; then
-     echo -e " $TIMESTAMP $R [ERROR] $N $Y please run this as root user $N"
+     echo -e " $TIMESTAMP $R [ERROR] $N $Y please run this as root user $N"  | tee -a $LOGS_FILE
      exit 1
 fi
 
 validate(){
     if [ $2 -ne 0 ]; then
-        echo -e " $TIMESTAMP $R [ERROR] $N given $1 is ..... $R failed $N"
+        echo -e " $TIMESTAMP $R [ERROR] $N given $1 is ..... $R failed $N" | tee -a $LOGS_FILE 
         exit 1
     else
-        echo -e " $TIMESTAMP $Y [INFO] $N given $1 is ..... $G success $N"
+        echo -e " $TIMESTAMP $Y [INFO] $N given $1 is ..... $G success $N"  | tee -a $LOGS_FILE
     fi
 }
 
-cp rabbitmq.repo /etc/yum.repos.d/rabbitmq.repo
+cp rabbitmq.repo /etc/yum.repos.d/rabbitmq.repo  &>>  $LOGS_FILE
 validate "copying rabbitmq.repo" $?
 
-dnf install rabbitmq-server -y
+dnf install rabbitmq-server -y   &>>  $LOGS_FILE
 validate "installing rabbitmq-server"  $?
 
 systemctl enable rabbitmq-server
-systemctl start rabbitmq-server
+systemctl start rabbitmq-server   &>>  $LOGS_FILE
 validate "enabling and starting of rabbitmq server" $?
 
 rabbitmqctl add_user roboshop roboshop123
-rabbitmqctl set_permissions -p / roboshop ".*" ".*" ".*"
+rabbitmqctl set_permissions -p / roboshop ".*" ".*" ".*"  
 validate "setting username and password" $?
 
 
