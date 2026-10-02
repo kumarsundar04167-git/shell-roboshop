@@ -52,7 +52,7 @@ cp $SCRIPT_DIR/payment.service /etc/systemd/system/payment.service  &>>  $LOGS_F
 validate "copying service file" $?
 
 systemctl daemon-reload
-systemctl enable cart
-systemctl start cart  &>>  $LOGS_FILE
+systemctl enable payment
+systemctl start payment  &>>  $LOGS_FILE
 validate "enable and restarted payment" $?
 
