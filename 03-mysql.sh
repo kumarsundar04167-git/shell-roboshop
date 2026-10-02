@@ -30,7 +30,7 @@ dnf list installed mysql-sever -y   &>>  $LOGS_FILE
 if [ $? -ne 0 ]; then
     echo -e " $TIMESTAMP $Y installig mysql-server $N "
     dnf install mysql-server -y
-    validete "installing mysql-sever" $?
+    validate "installing mysql-sever" $?
 else
     echo "mysql-server already installed ....."
 fi
