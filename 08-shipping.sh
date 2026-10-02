@@ -1,5 +1,5 @@
 #!/bin/bash
-userid=$(id -u)
+
 LOGS_FOLDER="/var/log/roboshop"
 sudo mkdir -p $LOGS_FOLDER
 sudo chown -R ec2-user:ec2-user $LOGS_FOLDER
@@ -8,66 +8,72 @@ LOGS_FILE="$LOGS_FOLDER/$0.log"
 SCRIPT_DIR=$PWD
 MYSQL_HOST=mysql.devopsonline.online
 
-TIMESTAMP=$(date "+%H:%M:%S")
+USERID=$(id -u)
 R="\e[31m"
 G="\e[32m"
 Y="\e[33m"
 N="\e[0m"
+TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
 
-if [ $userid -ne 0 ]; then
-     echo -e " $TIMESTAMP $R [ERROR] $N $Y please run this as root user $N"  | tee -a $LOGS_FILE
-     exit 1
+if [ $USERID -ne 0 ]; then
+    echo -e "$TIMESTAMP [ERROR] $R Please run this script with root access $N" | tee -a $LOGS_FILE
+    exit 1
 fi
 
-validate(){
-    if [ $2 -ne 0 ]; then
-        echo -e " $TIMESTAMP $R [ERROR] $N given $1 is ..... $R failed $N"   | tee -a $LOGS_FILE
+VALIDATE(){
+    if [ $1 -ne 0 ]; then
+        echo -e "$TIMESTAMP [ERROR] $2 ... $R FAILURE $N" | tee -a $LOGS_FILE
         exit 1
     else
-        echo -e " $TIMESTAMP $Y [INFO] $N given $1 is ..... $G success $N"   | tee -a $LOGS_FILE
+        echo -e "$TIMESTAMP [INFO] $2 ... $G SUCCESS $N" | tee -a $LOGS_FILE
     fi
 }
 
-dnf install maven -y  &>>  $LOGS_FILE
-validate "installing maven" $?
+dnf install maven -y &>>$LOGS_FILE
+VALIDATE $? "Installing Maven"
+
+id roboshop &>>$LOGS_FILE
+if [ $? -ne 0 ]; then
+    useradd --system --home /app --shell /sbin/nologin --comment "roboshop system user" roboshop &>>$LOGS_FILE
+    VALIDATE $? "Creating roboshop system user"
+else
+    echo -e "System user roboshop already created ... $Y SKIPPING $N"
+fi
 
 rm -rf /app
-validate "removing app directory" $?
+VALIDATE $? "Removing existing code"
 
 rm -rf /tmp/shipping.zip
-validate "removing zip file" $?
+VALIDATE $? "Removed shipping zip"
 
-mkdir -p /app
-validate "creating app directory" $?
+mkdir -p /app  &>>$LOGS_FILE
+VALIDATE $? "Creating app directory"
 
-curl -o /tmp/shipping.zip https://roboshop-artifacts.s3.amazonaws.com/shipping-v3.zip 
+curl -o /tmp/shipping.zip https://roboshop-artifacts.s3.amazonaws.com/shipping-v3.zip  &>>$LOGS_FILE
 cd /app 
-unzip /tmp/shipping.zip  &>>  $LOGS_FILE
-validate "download and extracting code" $?
+unzip /tmp/shipping.zip &>>$LOGS_FILE
+VALIDATE $? "Downloaded and extracted shipping code"
 
-cd /app 
-mvn clean package 
-mv target/shipping-1.0.jar shipping.jar &>>  $LOGS_FILE
-validate "installing dependencies" $?
+mvn clean package  &>>$LOGS_FILE
+mv target/shipping-1.0.jar shipping.jar 
+VALIDATE $? "Installing dependencies"
 
-cp $SCRIPT_DIR/shipping.service /etc/systemd/system/shipping.service  &>>  $LOGS_FILE
-validate "copying service file" $?
+cp $SCRIPT_DIR/shipping.service /etc/systemd/system/shipping.service
+VALIDATE $? "Created systemctl service"
 
+dnf install mysql -y &>>$LOGS_FILE
+VALIDATE $? "Installing MySQL client"
 
-dnf install mysql -y   &>>  $LOGS_FILE
-validate "installing mysql" $?
-
-mysql -h $MYSQL_HOST -u root -pRoboShop@1 -e "use cities"
+mysql -h $MYSQL_HOST -u root -pRoboShop@1 -e "use cities" &>>$LOGS_FILE
 if [ $? -ne 0 ]; then
     mysql -h $MYSQL_HOST -uroot -pRoboShop@1 < /app/db/schema.sql
     mysql -h $MYSQL_HOST -uroot -pRoboShop@1 < /app/db/app-user.sql
     mysql -h $MYSQL_HOST -uroot -pRoboShop@1 < /app/db/master-data.sql
-    validate "loading master data " $?
+    VALIDATE $? "Data loaded"
 else
-    echo -e " $TIMESTAMP $Y [INFO] $N data already loaded ...... $Y skipping $N "
+    echo -e "Data already loaded ... $Y SKIPPING $N"
 fi
 
-systemctl daemon-reload
-systemctl enable shipping
-systemctl start shipping   &>>  $LOGS_FILE
-validate "enable and restarted shipping" $?
+systemctl enable shipping 
+systemctl restart shipping
+VALIDATE $? "Enable and restarted shipping"
