@@ -7,6 +7,19 @@ DOMAIN_NAME="devopsonline.online" # replace with your domain name
 for instance in $@
 do
     echo "Launching instance: $instance"
+    roboshop-common=$(aws ec2 describe-security-groups \
+        --filters "Name=group-name,Values=roboshop-common" \
+        --query 'SecurityGroups[0].GroupId' \
+        --output text)
+
+    roboshop-$instance=$(aws ec2 describe-security-groups \
+        --filters "Name=group-name,Values=roboshop-$instance" \
+        --query 'SecurityGroups[0].GroupId' \
+        --output text)
+
+    echo "Common SG: $roboshop-common"
+    echo "$instance SG: $roboshop-$instance"
+    
     INSTANCE_ID=$(aws ec2 run-instances \
         --image-id "ami-0220d79f3f480ecf5"  \
         --instance-type t3.micro \
