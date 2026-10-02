@@ -6,6 +6,7 @@ sudo chown -R ec2-user:ec2-user $LOGS_FOLDER
 sudo chmod -R 755 $LOGS_FOLDER
 LOGS_FILE="$LOGS_FOLDER/$0.log"
 SCRIPT_DIR=$PWD
+MYSQL_HOST=mysql.devopsonline.online
 
 TIMESTAMP=$(date "+%H:%M:%S")
 R="\e[31m"
@@ -58,9 +59,9 @@ validate "installing mysql" $?
 
 mysql -h $MYSQL_HOST -u root -pRoboShop@1 -e "use cities"
 if [ $? -ne 0 ]; then
-    mysql -h mysql.devopsonlne.online -uroot -pRoboShop@1 < /app/db/schema.sql
-    mysql -h mysql.devopsonlne.online -uroot -pRoboShop@1 < /app/db/master-data.sql
-    mysql -h mysql.devopsonlne.online -uroot -pRoboShop@1 < /app/db/master-data.sql
+    mysql -h $MYSQL_HOST -uroot -pRoboShop@1 < /app/db/schema.sql
+    mysql -h $MYSQL_HOST -uroot -pRoboShop@1 < /app/db/master-data.sql
+    mysql -h $MYSQL_HOST -uroot -pRoboShop@1 < /app/db/master-data.sql
     validate "loading master data " $?
 else
     echo -e " $TIMESTAMP $Y [INFO] $N data already loaded ...... $Y skipping $N "
