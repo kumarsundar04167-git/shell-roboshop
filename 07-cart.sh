@@ -1,12 +1,11 @@
 #!/bin/bash
 userid=$(id -u)
-LOGS_DIR="var/log/roboshop"
-sudo mkdir -p $LOGS_DIR
-sudo chown -R ec2-user:ec2-user $LOGS_DIR
-sudo chmod -R 755 $LOGS_DIR
-LOGS_FILE="$LOGS_DIR/$0.log"
-SCRIPT_DIR=$pwd
-
+LOGS_FOLDER="/var/log/roboshop"
+sudo mkdir -p $LOGS_FOLDER
+sudo chown -R ec2-user:ec2-user $LOGS_FOLDER
+sudo chmod -R 755 $LOGS_FOLDER
+LOGS_FILE="$LOGS_FOLDER/$0.log"
+SCRIPT_DIR=$PWD
 TIMESTAMP=$(date "+%H:%M:%S")
 R="\e[31m"
 G="\e[32m"
